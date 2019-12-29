@@ -1,6 +1,5 @@
 #![no_std]
 #![feature(core_intrinsics, lang_items, asm)]
-#[crate_type = "staticlib"]
 mod rpi;
 
 use core::panic::PanicInfo;

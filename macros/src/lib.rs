@@ -38,7 +38,6 @@ fn create_mailbox_request(
     item: TokenStream,
 ) -> syn::parse::Result<TokenStream> {
     let struct_ast: ItemStruct = syn::parse(item)?;
-    println!("{:?}", attrs);
     let params: syn::parse::Result<Params> = syn::parse(attrs);
     let name = &struct_ast.ident;
     let fields = struct_ast.fields.iter();
@@ -80,13 +79,9 @@ fn parse_params(attrs: ParseStream) -> Option<Params> {
     return if let Ok(params) = parser(attrs) {
         let mut i = params.iter();
         let buffer_size = i.next()?.clone();
-        println!("buffer_size");
         let code = i.next()?.clone();
-        println!("code");
         let tag_id = i.next()?.clone();
-        println!("tag_id");
         let tag_size = i.next()?.clone();
-        println!("teg_size");
         Some(Params {
             buffer_size: buffer_size,
             code: code,

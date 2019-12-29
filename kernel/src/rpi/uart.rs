@@ -1,9 +1,9 @@
 use super::mbox;
-use super::rpi::addresses::enable_gpio_pin;
-use super::rpi::addresses::mmio_read;
-use super::rpi::addresses::mmio_write;
-use super::rpi::addresses::GPIOFunction;
-use super::rpi::addresses::MMIO;
+use super::rpi::enable_gpio_pin;
+use super::rpi::mmio_read;
+use super::rpi::mmio_write;
+use super::rpi::GPIOFunction;
+use super::rpi::MMIO;
 
 pub fn init() {
     unsafe {

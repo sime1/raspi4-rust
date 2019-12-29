@@ -1,8 +1,8 @@
 use core::intrinsics::transmute;
 
-use super::rpi::addresses::mmio_read;
-use super::rpi::addresses::mmio_write;
-use super::rpi::addresses::MMIO;
+use super::rpi::mmio_read;
+use super::rpi::mmio_write;
+use super::rpi::MMIO;
 
 use macros::mailbox_request;
 
@@ -86,7 +86,6 @@ struct SetClockRateResponse {
     length: u32,
     id: ClockId,
     rate: u32,
-    endTag: u32,
 }
 
 pub unsafe fn call_mbox(buf: *const u32, ch: MailboxChannel) {
