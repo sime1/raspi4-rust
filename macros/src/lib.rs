@@ -1,11 +1,11 @@
 extern crate proc_macro;
 
 use crate::proc_macro::TokenStream;
-use quote::{quote, format_ident};
+use quote::{format_ident, quote};
 use syn;
 use syn::parse::{Parse, ParseStream};
-use syn::{Expr, ItemStruct, Token};
 use syn::punctuated::Punctuated;
+use syn::{Expr, ItemStruct, Token};
 
 struct Params {
     buffer_size: Expr,
@@ -18,8 +18,8 @@ impl Parse for Params {
     fn parse(input: ParseStream) -> syn::parse::Result<Self> {
         return match parse_params(input) {
             Some(p) => Ok(p),
-            None => Err(input.error("cannot parse parameters"))
-        }
+            None => Err(input.error("cannot parse parameters")),
+        };
     }
 }
 
@@ -33,7 +33,10 @@ pub fn mailbox_request(attrs: TokenStream, item: TokenStream) -> TokenStream {
     };
 }
 
-fn create_mailbox_request(attrs: TokenStream, item: TokenStream) -> syn::parse::Result<TokenStream> {
+fn create_mailbox_request(
+    attrs: TokenStream,
+    item: TokenStream,
+) -> syn::parse::Result<TokenStream> {
     let struct_ast: ItemStruct = syn::parse(item)?;
     println!("{:?}", attrs);
     let params: syn::parse::Result<Params> = syn::parse(attrs);
@@ -69,9 +72,8 @@ fn create_mailbox_request(attrs: TokenStream, item: TokenStream) -> syn::parse::
     } else {
         println!("param error");
         Ok(TokenStream::from(gen))
-    }
+    };
 }
-
 
 fn parse_params(attrs: ParseStream) -> Option<Params> {
     let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;
@@ -79,19 +81,19 @@ fn parse_params(attrs: ParseStream) -> Option<Params> {
         let mut i = params.iter();
         let buffer_size = i.next()?.clone();
         println!("buffer_size");
-        let code= i.next()?.clone();
+        let code = i.next()?.clone();
         println!("code");
-        let tag_id= i.next()?.clone();
+        let tag_id = i.next()?.clone();
         println!("tag_id");
-        let tag_size= i.next()?.clone();
+        let tag_size = i.next()?.clone();
         println!("teg_size");
         Some(Params {
             buffer_size: buffer_size,
-            code: code, 
+            code: code,
             tag_id: tag_id,
             tag_size: tag_size,
         })
     } else {
         None
-    }
+    };
 }
