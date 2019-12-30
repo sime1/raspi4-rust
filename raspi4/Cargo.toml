@@ -1,0 +1,8 @@
+[package]
+name = "raspi4"
+version = "0.1.0"
+authors = ["sime1 <sime.pizzi@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+macros = { path = "../macros"}

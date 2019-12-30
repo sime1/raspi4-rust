@@ -1,8 +1,7 @@
 use core::intrinsics::transmute;
 
-use super::rpi::mmio_read;
-use super::rpi::mmio_write;
-use super::rpi::MMIO;
+use super::mmio;
+use super::mmio::MMIO;
 
 use macros::mailbox_request;
 
@@ -62,7 +61,6 @@ struct MailboxRequestHeader {
 }
 
 #[mailbox_request(36, MailboxCode::Request, MailboxTag::SetClock, 12)]
-#[repr(C, align(16))]
 struct SetClockRateRequest {
     id: ClockId,
     rate: u32,
@@ -72,20 +70,19 @@ struct SetClockRateRequest {
 impl Default for SetClockRateRequest {
     fn default() -> Self {
         Self {
-            header: SetClockRateRequestHeader,
+            header: MailboxRequestHeader{
+                buffer_size: 36,
+                code: MailboxCode::Request,
+                tag_id: MailboxTag::SetClock,
+                tag_size: 12,
+                unknown: 0,
+            },
             id: ClockId::ARM,
-            rate: 4000000,
+            rate: 4000000, // 0x3d0900
             skip_turbo: 0,
             end_tag: 0,
         }
     }
-}
-
-#[repr(C, align(16))]
-struct SetClockRateResponse {
-    length: u32,
-    id: ClockId,
-    rate: u32,
 }
 
 pub unsafe fn call_mbox(buf: *const u32, ch: MailboxChannel) {
@@ -93,10 +90,10 @@ pub unsafe fn call_mbox(buf: *const u32, ch: MailboxChannel) {
     let mbox_status = MMIO::MBOXST as u32;
     let mbox_write = MMIO::MBOXWR as u32;
     wait_status(mbox_status, MailboxStatus::Full);
-    mmio_write(mbox_write, r);
+    mmio::write(mbox_write, r);
     loop {
         wait_status(mbox_status, MailboxStatus::Empty);
-        let res = mmio_read(MMIO::MBOXRD as u32);
+        let res = mmio::read(MMIO::MBOXRD as u32);
         if r == res {
             return;
         }
@@ -105,7 +102,7 @@ pub unsafe fn call_mbox(buf: *const u32, ch: MailboxChannel) {
 
 unsafe fn wait_status(mem: u32, target: MailboxStatus) {
     let t = target as u32;
-    while (mmio_read(mem) & t) != 0 {}
+    while (mmio::read(mem) & t) != 0 {}
 }
 
 pub fn set_uart_clock(rate: u32) {

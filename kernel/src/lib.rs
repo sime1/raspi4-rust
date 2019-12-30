@@ -1,9 +1,8 @@
 #![no_std]
 #![feature(core_intrinsics, lang_items, asm)]
-mod rpi;
 
 use core::panic::PanicInfo;
-use rpi::uart;
+use raspi4::uart;
 
 #[no_mangle]
 pub extern "C" fn kernel_main() {

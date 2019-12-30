@@ -1,4 +1,3 @@
-
 use core::intrinsics::volatile_load;
 use core::intrinsics::volatile_store;
 
@@ -57,11 +56,11 @@ pub enum GPIOFunction {
     Alt5 = 0b010,
 }
 
-pub unsafe fn mmio_write(reg: u32, val: u32) {
+pub unsafe fn write(reg: u32, val: u32) {
     volatile_store(reg as *mut u32, val)
 }
 
-pub unsafe fn mmio_read(reg: u32) -> u32 {
+pub unsafe fn read(reg: u32) -> u32 {
     volatile_load(reg as *const u32)
 }
 
@@ -72,11 +71,11 @@ pub fn enable_gpio_pin(pin: u32, func: GPIOFunction) {
     let set = (func as u32) << offset;
     let mut val: u32;
     unsafe {
-        val = mmio_read(addr);
+        val = read(addr);
     }
     val = val & !mask;
     val = val | set;
     unsafe {
-        mmio_write(addr, val);
+        write(addr, val);
     }
 }
