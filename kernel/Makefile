@@ -29,7 +29,10 @@ libkernel: src/*.rs
 	cargo xbuild --target $(shell pwd)/$(ARCH).json $(CARGO_FLAGS)
 
 $(OUTPUT)/kernel.elf: $(OUTPUT)/start.o libkernel
-	$(LD) -nostdlib -nostartfiles $(OUTPUT)/start.o -T linker.ld -o $(OUTPUT)/kernel.elf -L$(OUTPUT) -l:libkernel.a
+	$(CC) -Wl,--gc-sections -nostdlib -nostdinc -nostartfiles $(OUTPUT)/start.o -T linker.ld -o $(OUTPUT)/kernel.elf -L$(OUTPUT) -l:libkernel.a
 
 $(OUTPUT)/kernel8.img: $(OUTPUT)/kernel.elf
 	$(OBJCPY) -O binary $(OUTPUT)/kernel.elf $(OUTPUT)/kernel8.img
+
+dump: $(OUTPUT)/kernel8.img
+	$(ARCH)-objdump -D $(OUTPUT)/kernel.elf > dump.txt

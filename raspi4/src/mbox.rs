@@ -51,13 +51,24 @@ pub enum ClockId {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy)]
 struct MailboxRequestHeader {
     buffer_size: u32,
     code: MailboxCode,
     tag_id: MailboxTag,
     tag_size: u32,
     unknown: u32,
+}
+
+impl Clone for MailboxRequestHeader {
+    fn clone(&self) -> Self {
+        Self {
+            buffer_size: self.buffer_size,
+            code: self.code,
+            tag_id: self.tag_id,
+            tag_size: self.tag_size,
+            unknown: self.unknown,
+        }
+    }
 }
 
 #[mailbox_request(36, MailboxCode::Request, MailboxTag::SetClock, 12)]
@@ -70,15 +81,9 @@ struct SetClockRateRequest {
 impl Default for SetClockRateRequest {
     fn default() -> Self {
         Self {
-            header: MailboxRequestHeader{
-                buffer_size: 36,
-                code: MailboxCode::Request,
-                tag_id: MailboxTag::SetClock,
-                tag_size: 12,
-                unknown: 0,
-            },
+            header: SetClockRateRequestHeader.clone(),
             id: ClockId::ARM,
-            rate: 4000000, // 0x3d0900
+            rate: 4000000,
             skip_turbo: 0,
             end_tag: 0,
         }
