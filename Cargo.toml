@@ -1,0 +1,13 @@
+[workspace]
+
+members = [
+    "kernel",
+    "macros",
+    "raspi4"
+]
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"

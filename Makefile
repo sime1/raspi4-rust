@@ -25,7 +25,7 @@ $(OUTPUT)/start.o: start.S
 before-all:
 	mkdir -p $(OUTPUT)
 
-libkernel: src/*.rs
+libkernel: **/*.rs
 	cargo xbuild --target $(shell pwd)/$(ARCH).json $(CARGO_FLAGS)
 
 $(OUTPUT)/kernel.elf: $(OUTPUT)/start.o libkernel
