@@ -34,5 +34,5 @@ $(OUTPUT)/kernel.elf: $(OUTPUT)/start.o libkernel
 $(OUTPUT)/kernel8.img: $(OUTPUT)/kernel.elf
 	$(OBJCPY) -O binary $(OUTPUT)/kernel.elf $(OUTPUT)/kernel8.img
 
-dump: $(OUTPUT)/kernel8.img
+dump: default
 	$(ARCH)-objdump -D $(OUTPUT)/kernel.elf > dump.txt

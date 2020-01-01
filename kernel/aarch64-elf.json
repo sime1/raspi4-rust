@@ -7,7 +7,7 @@
     "env": "elf",
     "vendor": "unknown",
     "arch": "aarch64",
-    "features": "-neon",
+    "features": "+strict-align",
     "linker": "aarch64-elf-gcc",
     "linker-flavor": "gcc",
     "data-layout": "e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128",

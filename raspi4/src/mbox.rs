@@ -81,7 +81,7 @@ struct SetClockRateRequest {
 impl Default for SetClockRateRequest {
     fn default() -> Self {
         Self {
-            header: SetClockRateRequestHeader.clone(),
+            header: SetClockRateRequestHeader,
             id: ClockId::ARM,
             rate: 4000000,
             skip_turbo: 0,
@@ -117,6 +117,7 @@ pub fn set_uart_clock(rate: u32) {
         ..Default::default()
     };
     unsafe {
+        asm!("dsb sy");
         call_mbox(
             &req as *const SetClockRateRequest as *const u32,
             MailboxChannel::ARM,
