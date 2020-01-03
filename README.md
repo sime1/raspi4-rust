@@ -5,19 +5,25 @@ programming the Pi 4.
 
 ## Dependencies
 
-To build a `kernel8.img` file, you need an `aarch64-elf` cross compilation 
-toolchain (other toolchains may work, you can try changing the `ARCH` in the 
-Makefile).
+* A working rust installation
+* cargo xbuild
+* cargo binutils
 
-You also need to have a working rust installation. Then to install the needed
-dependecies run 
+On linux, you can use the following commands (run one command at a time):
 
 ```shell
+# install rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# install cargo-xbuild
 rustup component add rust-src
 cargo install cargo-xbuild
+# install cargo-binutils
+cargo install cargo-binutils
+rustup component add llvm-tools-preview
+# use the nightly toolchain
 rustup override set nightly
 ```
-(The las command needs to be run inside the directory of the repo)
+(The last command needs to be run inside the directory of the repo)
 
 ## Building
 

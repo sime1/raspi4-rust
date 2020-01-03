@@ -1,8 +1,11 @@
 #![no_std]
-#![feature(core_intrinsics, lang_items, asm)]
+#![no_main]
+#![feature(core_intrinsics, lang_items, asm, global_asm)]
 
 use core::panic::PanicInfo;
 use raspi4::uart;
+
+global_asm!(include_str!("start.S"));
 
 #[no_mangle]
 pub extern "C" fn kernel_main() {

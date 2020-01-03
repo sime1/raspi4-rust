@@ -4,10 +4,6 @@ version = "0.1.0"
 authors = ["sime1 <sime.pizzi@gmail.com>"]
 edition = "2018"
 
-[lib]
-name = "kernel"
-crate-type = ["staticlib"]
-
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
