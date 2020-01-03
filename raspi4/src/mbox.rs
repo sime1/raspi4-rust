@@ -8,22 +8,22 @@ use macros::mailbox_request;
 #[repr(u32)]
 #[derive(Clone, Copy)]
 pub enum MailboxStatus {
-    Full = 0x80000000,
-    Empty = 0x40000000,
+    Full = 0x8000_0000,
+    Empty = 0x4000_0000,
 }
 
 #[repr(u32)]
 #[derive(Clone, Copy)]
 pub enum MailboxCode {
     Request = 0x0,
-    ResponseSuccess = 0x80000000,
-    ResponseError = 0x80000001,
+    ResponseSuccess = 0x8000_0000,
+    ResponseError = 0x8000_0001,
 }
 
 #[repr(u32)]
 #[derive(Clone, Copy)]
 pub enum MailboxTag {
-    SetClock = 0x00038002,
+    SetClock = 0x0003_8002,
 }
 
 #[repr(u32)]
@@ -91,7 +91,7 @@ impl Default for SetClockRateRequest {
 }
 
 /// # Safety
-/// 
+///
 /// * `buf` must be aligned to 16 bytes
 pub unsafe fn call_mbox(buf: *const u32, ch: MailboxChannel) {
     let r = (transmute::<*const u32, u64>(buf) as u32 & !0xF) | (ch as u32 & 0xF);

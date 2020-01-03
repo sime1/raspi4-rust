@@ -54,6 +54,8 @@ pub fn puts(s: &str) {
 }
 
 /// spinlock for a set number of cycles
+/// It actually delay for `cycles * 2`, but if we remove the `NOP` instruction
+/// the loop gets optimized away.
 fn delay(cycles: u32) {
     for _ in 0..cycles {
         unsafe {

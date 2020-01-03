@@ -1,11 +1,11 @@
 extern crate proc_macro;
 
 use crate::proc_macro::TokenStream;
+use heck::ShoutySnakeCase;
 use quote::{format_ident, quote};
 use syn;
 use syn::parse::{Parse, ParseStream};
-use syn::{Expr, ItemStruct, Token, Ident};
-use heck::ShoutySnakeCase;
+use syn::{Expr, Ident, ItemStruct, Token};
 
 struct Params {
     var_name: Option<Ident>,
@@ -99,7 +99,7 @@ fn parse_param<T: syn::parse::Parse>(attrs: ParseStream) -> Option<T> {
         // optional trailing comma
         let _ = attrs.parse::<Token![,]>();
         Some(ret)
-    } else  {
+    } else {
         None
     }
 }
