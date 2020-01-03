@@ -36,7 +36,7 @@ pub enum MMIO {
     UART0IMSC = MMIO_BASE + 0x00201038,
     UART0ICR = MMIO_BASE + 0x00201044,
 
-    MBOXRD = VIDEOCORE_MBOX + 0x0,
+    MBOXRD = VIDEOCORE_MBOX,
     MBOXPOLL = VIDEOCORE_MBOX + 0x10,
     MBOXSNDR = VIDEOCORE_MBOX + 0x14,
     MBOXST = VIDEOCORE_MBOX + 0x18,
@@ -56,10 +56,18 @@ pub enum GPIOFunction {
     Alt5 = 0b010,
 }
 
+/// # Safety
+/// 
+/// `reg` must be the address of a valid mmio register. This implies
+/// that it has to be aligned to 4 bytes
 pub unsafe fn write(reg: u32, val: u32) {
     volatile_store(reg as *mut u32, val)
 }
 
+/// # Safety
+/// 
+/// `reg` must be the address of a valid mmio register. This implies
+/// that it has to be aligned to 4 bytes
 pub unsafe fn read(reg: u32) -> u32 {
     volatile_load(reg as *const u32)
 }
@@ -73,8 +81,8 @@ pub fn enable_gpio_pin(pin: u32, func: GPIOFunction) {
     unsafe {
         val = read(addr);
     }
-    val = val & !mask;
-    val = val | set;
+    val &= !mask;
+    val |= set;
     unsafe {
         write(addr, val);
     }

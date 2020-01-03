@@ -9,7 +9,7 @@ use super::mmio::MMIO;
 pub fn init() {
     unsafe {
         mmio::write(MMIO::UART0CR as u32, 0);
-        mbox::set_uart_clock(4000000);
+        mbox::set_uart_clock(4_000_000);
         enable_gpio_pin(14, GPIOFunction::Alt0);
         enable_gpio_pin(15, GPIOFunction::Alt0);
         mmio::write(MMIO::GPPUD as u32, 0);
@@ -40,7 +40,7 @@ pub fn readc() -> u8 {
         while mmio::read(MMIO::UART0FR as u32) & 0x10 != 0 {}
         ch = mmio::read(MMIO::UART0DR as u32) as u8;
     }
-    return ch;
+    ch
 }
 
 /// write a string to the UART0

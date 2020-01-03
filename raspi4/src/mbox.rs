@@ -81,15 +81,18 @@ struct SetClockRateRequest {
 impl Default for SetClockRateRequest {
     fn default() -> Self {
         Self {
-            header: SetClockRateRequestHeader,
+            header: SET_CLOCK_RATE_REQUEST_HEADER,
             id: ClockId::ARM,
-            rate: 4000000,
+            rate: 4_000_000,
             skip_turbo: 0,
             end_tag: 0,
         }
     }
 }
 
+/// # Safety
+/// 
+/// * `buf` must be aligned to 16 bytes
 pub unsafe fn call_mbox(buf: *const u32, ch: MailboxChannel) {
     let r = (transmute::<*const u32, u64>(buf) as u32 & !0xF) | (ch as u32 & 0xF);
     let mbox_status = MMIO::MBOXST as u32;
@@ -113,7 +116,7 @@ unsafe fn wait_status(mem: u32, target: MailboxStatus) {
 pub fn set_uart_clock(rate: u32) {
     let req = SetClockRateRequest {
         id: ClockId::UART,
-        rate: rate,
+        rate,
         ..Default::default()
     };
     unsafe {

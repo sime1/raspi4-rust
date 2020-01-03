@@ -4,10 +4,11 @@ use crate::proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use syn;
 use syn::parse::{Parse, ParseStream};
-use syn::punctuated::Punctuated;
-use syn::{Expr, ItemStruct, Token};
+use syn::{Expr, ItemStruct, Token, Ident};
+use heck::ShoutySnakeCase;
 
 struct Params {
+    var_name: Option<Ident>,
     buffer_size: Expr,
     code: Expr,
     tag_id: Expr,
@@ -16,10 +17,10 @@ struct Params {
 
 impl Parse for Params {
     fn parse(input: ParseStream) -> syn::parse::Result<Self> {
-        return match parse_params(input) {
+        match parse_params(input) {
             Some(p) => Ok(p),
             None => Err(input.error("cannot parse parameters")),
-        };
+        }
     }
 }
 
@@ -27,10 +28,10 @@ impl Parse for Params {
 pub fn mailbox_request(attrs: TokenStream, item: TokenStream) -> TokenStream {
     // Construct a representation of Rust code as a syntax tree
     // that we can manipulate
-    return match create_mailbox_request(attrs, item) {
+    match create_mailbox_request(attrs, item) {
         Ok(s) => s,
         Err(e) => panic!("cannot parse struct: {}", e),
-    };
+    }
 }
 
 fn create_mailbox_request(
@@ -51,8 +52,12 @@ fn create_mailbox_request(
             end_tag: u32,
         }
     };
-    return if let Ok(p) = params {
-        let header_name = format_ident!("{}Header", name);
+    if let Ok(p) = params {
+        let header_name = if let Some(var_name) = p.var_name {
+            var_name
+        } else {
+            format_ident!("{}_HEADER", name.to_string().to_shouty_snake_case())
+        };
         let buffer_size = p.buffer_size;
         let code = p.code;
         let tag_id = p.tag_id;
@@ -71,24 +76,30 @@ fn create_mailbox_request(
     } else {
         println!("param error");
         Ok(TokenStream::from(gen))
-    };
+    }
 }
 
 fn parse_params(attrs: ParseStream) -> Option<Params> {
-    let parser = Punctuated::<Expr, Token![,]>::parse_separated_nonempty;
-    return if let Ok(params) = parser(attrs) {
-        let mut i = params.iter();
-        let buffer_size = i.next()?.clone();
-        let code = i.next()?.clone();
-        let tag_id = i.next()?.clone();
-        let tag_size = i.next()?.clone();
-        Some(Params {
-            buffer_size: buffer_size,
-            code: code,
-            tag_id: tag_id,
-            tag_size: tag_size,
-        })
-    } else {
+    let buffer_size: Expr = parse_param(attrs)?;
+    let code: Expr = parse_param(attrs)?;
+    let tag_id: Expr = parse_param(attrs)?;
+    let tag_size: Expr = parse_param(attrs)?;
+    let var_name: Option<Ident> = parse_param(attrs);
+    Some(Params {
+        var_name,
+        buffer_size,
+        code,
+        tag_id,
+        tag_size,
+    })
+}
+
+fn parse_param<T: syn::parse::Parse>(attrs: ParseStream) -> Option<T> {
+    if let Ok(ret) = attrs.parse::<T>() {
+        // optional trailing comma
+        let _ = attrs.parse::<Token![,]>();
+        Some(ret)
+    } else  {
         None
-    };
+    }
 }
